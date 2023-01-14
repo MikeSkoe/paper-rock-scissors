@@ -1,3 +1,8 @@
+module Move = Choosing.Move;
+module Choice = Choosing.Choice;
+module Style = ReactDOM.Style;
+module Store = Store.Store;
+
 module Divide = {
     @react.component
     let make = () => <br />
@@ -21,8 +26,8 @@ module ChoiceC = {
         @react.component
         let make = (~move) => {
             switch move {
-                | Choosing.ChangeElement(element) => <b>{element->Element.toString->React.string}</b>
-                | Choosing.Attack => <b>{"Attack"->React.string}</b>
+                | Move.ChangeElement(element) => <b>{element->Element.toString->React.string}</b>
+                | Move.Attack => <b>{"Attack"->React.string}</b>
             }
         }
     }
@@ -31,13 +36,13 @@ module ChoiceC = {
         module Button = {
             @react.component
             let make = (~element, ~move, ~dispatch) => {
-                let elementStyle = element => Choosing.ChangeElement(element) == move
-                    ? ReactDOM.Style.make(~border="1px solid red", ())
-                    : ReactDOM.Style.make(());
+                let elementStyle = element => Move.ChangeElement(element) == move
+                    ? Style.make(~border="1px solid red", ())
+                    : Style.make(());
 
                 <button
                     style={elementStyle(element)}
-                    onClick={_ => dispatch(Choosing.ChangeElement(element))}
+                    onClick={_ => dispatch(Move.ChangeElement(element))}
                 >
                     {element->Element.toString->React.string}
                 </button>
@@ -46,9 +51,9 @@ module ChoiceC = {
 
         @react.component
         let make = (~move, ~dispatch, ~isLeft) => {
-            let attackStyle = move === Choosing.Attack
-                ? ReactDOM.Style.make(~border="1px solid red", ())
-                : ReactDOM.Style.make(());
+            let attackStyle = move === Move.Attack
+                ? Style.make(~border="1px solid red", ())
+                : Style.make(());
             let updateDispatch = element => dispatch(isLeft ? State.UpdateLeft(element) : State.UpdateRight(element));
             let confirmDispatch = _ => dispatch(isLeft ? State.ConfirmLeft : State.ConfirmRight);
 
@@ -56,7 +61,7 @@ module ChoiceC = {
                 <Button element={Element.Paper} move={move} dispatch={updateDispatch} />
                 <Button element={Element.Rock} move={move} dispatch={updateDispatch} />
                 <Button element={Element.Scissors} move={move} dispatch={updateDispatch} />
-                <button style={attackStyle} onClick={_ => updateDispatch(Choosing.Attack)}>
+                <button style={attackStyle} onClick={_ => updateDispatch(Move.Attack)}>
                     {"Attack"->React.string}
                 </button>
                 <button onClick={confirmDispatch}>
@@ -67,7 +72,7 @@ module ChoiceC = {
     }
 
     @react.component
-    let make = (~choice: Choosing.choice, ~dispatch, ~isLeft) => {
+    let make = (~choice: Choice.t, ~dispatch, ~isLeft) => {
         choice.confirmed
             ? <ConfirmedC move={choice.move} />
             : <NotConfirmedC move={choice.move} dispatch={dispatch} isLeft={isLeft} />
@@ -76,10 +81,10 @@ module ChoiceC = {
 
 @react.component
 let make = () => {
-    let left = Store.Store.useSelector(State.Select.left);
-    let right = Store.Store.useSelector(State.Select.right);
-    let choosing = Store.Store.useSelector(State.Select.choosing);
-    let dispatch = Store.Store.useDispatch();
+    let left = Store.useSelector(State.Select.left);
+    let right = Store.useSelector(State.Select.right);
+    let choosing = Store.useSelector(State.Select.choosing);
+    let dispatch = Store.useDispatch();
 
     <>
         <PlayerC player={left} />

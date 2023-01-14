@@ -1,6 +1,9 @@
+module Choice = Choosing.Choice;
+module Move = Choosing.Move;
+
 type action =
-    | UpdateLeft(Choosing.move)
-    | UpdateRight(Choosing.move)
+    | UpdateLeft(Move.t)
+    | UpdateRight(Move.t)
     | ConfirmLeft
     | ConfirmRight
     ;
@@ -12,12 +15,12 @@ type state = {
 }
 
 let updateElement = (player: Player.t, playerChoice) => {
-    let element = playerChoice->Choosing.foldElement(player.element, e => e);
+    let element = playerChoice->Choice.foldElement(player.element, e => e);
     player->Player.setElement(element);
 }
 
 let updateDamage = (victim: Player.t, winger: Player.t, wingerChoice) => {
-    let damage = wingerChoice->Choosing.getDamage;
+    let damage = wingerChoice->Choice.getDamage;
     let coeff = winger.element->Element.getCoeff(victim.element);
     victim->Player.makeDamage(damage *. coeff);
 }
@@ -33,7 +36,7 @@ let updatePlayer = (
         ->updateDamage(winger, wingerChoice);
 }
 
-let updateChoosing = (choosing: Choosing.t, action) => {
+let updateChoosing = (choosing, action) => {
     choosing->switch action {
         | UpdateLeft(move) => Choosing.updateLeft(_, move)
         | UpdateRight(move) => Choosing.updateRight(_, move)
@@ -44,7 +47,7 @@ let updateChoosing = (choosing: Choosing.t, action) => {
 
 let reduce = (state, action) => {
     let choosing = updateChoosing(state.choosing, action);
-    let bothConfirmed = Choosing.bothConfirmed(choosing);
+    let bothConfirmed = Choosing.areBothConfirmed(choosing);
 
     if bothConfirmed {
         let left = state.left->updatePlayer(choosing.leftChoice, state.right, choosing.rightChoice);
