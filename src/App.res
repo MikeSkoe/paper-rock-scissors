@@ -27,7 +27,10 @@ module ChoiceC = {
         let make = (~move) => {
             switch move {
                 | Move.ChangeElement(element) => <b>{element->Element.toString->React.string}</b>
-                | Move.Attack => <b>{"Attack"->React.string}</b>
+                | Move.Attack(dice) => <div>
+                    <b>{"Attack"->React.string}</b>
+                    <p>{dice->Dice.toFloat->Belt.Float.toString->React.string}</p>
+                </div>
             }
         }
     }
@@ -51,20 +54,22 @@ module ChoiceC = {
 
         @react.component
         let make = (~move, ~dispatch, ~isLeft) => {
-            let attackStyle = move === Move.Attack
-                ? Style.make(~border="1px solid red", ())
-                : Style.make(());
+            let attackStyle = switch move {
+                | Move.Attack(_) => Style.make(~border="1px solid red", ())
+                | Move.ChangeElement(_) => Style.make(())
+            }
             let updateDispatch = element => dispatch(isLeft ? State.UpdateLeft(element) : State.UpdateRight(element));
-            let confirmDispatch = _ => dispatch(isLeft ? State.ConfirmLeft : State.ConfirmRight);
+            let onConfirmClick = _ => dispatch(isLeft ? State.ConfirmLeft : State.ConfirmRight);
+            let onAttackClick = _ => updateDispatch(Move.Attack(Dice.getRandom()))
 
             <>
                 <Button element={Element.Paper} move={move} dispatch={updateDispatch} />
                 <Button element={Element.Rock} move={move} dispatch={updateDispatch} />
                 <Button element={Element.Scissors} move={move} dispatch={updateDispatch} />
-                <button style={attackStyle} onClick={_ => updateDispatch(Move.Attack)}>
+                <button style={attackStyle} onClick={onAttackClick}>
                     {"Attack"->React.string}
                 </button>
-                <button onClick={confirmDispatch}>
+                <button onClick={onConfirmClick}>
                     {"Confirm"->React.string}
                 </button>
             </>
@@ -83,8 +88,22 @@ module ChoiceC = {
 let make = () => {
     let left = Store.useSelector(State.Select.left);
     let right = Store.useSelector(State.Select.right);
+    let bothConfirmed = Store.useSelector(
+        state => state
+            ->State.Select.choosing
+            ->Choosing.foldConfirmed(false, (_, _) => true)
+    );
     let choosing = Store.useSelector(State.Select.choosing);
     let dispatch = Store.useDispatch();
+
+    React.useEffect1(_ => {
+        if (bothConfirmed) {
+            let timer = Js.Global.setTimeout(_ => dispatch(State.Apply), 2000);
+            Some(_ => Js.Global.clearTimeout(timer))
+        } else {
+            None;
+        }
+    }, [bothConfirmed])
 
     <>
         <PlayerC player={left} />

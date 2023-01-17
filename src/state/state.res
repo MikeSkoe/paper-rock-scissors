@@ -6,6 +6,7 @@ type action =
     | UpdateRight(Move.t)
     | ConfirmLeft
     | ConfirmRight
+    | Apply
     ;
 
 type state = {
@@ -42,20 +43,21 @@ let updateChoosing = (choosing, action) => {
         | UpdateRight(move) => Choosing.updateRight(_, move)
         | ConfirmLeft => Choosing.confirmLeft
         | ConfirmRight => Choosing.confirmRight
+        | Apply => (choosing => choosing)
     }
 }
 
-let reduce = (state, action) => {
-    let choosing = updateChoosing(state.choosing, action);
-    let bothConfirmed = Choosing.areBothConfirmed(choosing);
-
-    if bothConfirmed {
-        let left = state.left->updatePlayer(choosing.leftChoice, state.right, choosing.rightChoice);
-        let right = state.right->updatePlayer(choosing.rightChoice, state.left, choosing.leftChoice);
-        let choosing = Choosing.empty;
-        { left, right, choosing }
-    } else {
-        { ...state, choosing }
+let reduce = (state, action): state  => {
+    switch action {
+        | Apply => updateChoosing(state.choosing, action)->Choosing.foldConfirmed(
+            { ...state, choosing: updateChoosing(state.choosing, action) },
+            (leftChoice, rightChoice) => ({
+                left: state.left->updatePlayer(leftChoice, state.right, rightChoice),
+                right: state.right->updatePlayer(rightChoice, state.left, leftChoice),
+                choosing: Choosing.empty,
+            }),
+        )
+        | _ => { ...state, choosing: updateChoosing(state.choosing, action) }
     }
 }
 
