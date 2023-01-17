@@ -1,11 +1,8 @@
-module Choice = Choosing.Choice;
 module Move = Choosing.Move;
 
 type action =
-    | UpdateLeft(Move.t)
-    | UpdateRight(Move.t)
-    | ConfirmLeft
-    | ConfirmRight
+    | SetLeft(Move.t)
+    | SetRight(Move.t)
     | Apply
     ;
 
@@ -15,35 +12,37 @@ type state = {
     choosing: Choosing.t,
 }
 
-let updateElement = (player: Player.t, playerChoice) => {
-    let element = playerChoice->Choice.foldElement(player.element, e => e);
-    player->Player.setElement(element);
+let updateElement = (player: Player.t, playerMove: Move.t) => {
+    player->Player.setElement(
+        playerMove->Move.foldElement(player.element, e => e),
+    );
 }
 
-let updateDamage = (victim: Player.t, winger: Player.t, wingerChoice) => {
-    let damage = wingerChoice->Choice.getDamage;
+let updateDamage = (victim: Player.t, winger: Player.t, wingerMove: Move.t) => {
+    let damage = wingerMove->Move.foldDice(
+        0.0,
+        dice => dice->Dice.toFloat,
+    );
     let coeff = winger.element->Element.getCoeff(victim.element);
     victim->Player.makeDamage(damage *. coeff);
 }
 
 let applyDamageToPlayer = (
     victim,
-    victimChoice,
+    victimMove,
     winger,
-    wingerChoice,
+    wingerMove,
 ) => {
     victim
-        ->updateElement(victimChoice)
-        ->updateDamage(winger, wingerChoice);
+        ->updateElement(victimMove)
+        ->updateDamage(winger, wingerMove);
 }
 
 let updateChoosing = (choosing, action) => {
-    choosing->switch action {
-        | UpdateLeft(move) => Choosing.updateLeft(_, move)
-        | UpdateRight(move) => Choosing.updateRight(_, move)
-        | ConfirmLeft => Choosing.confirmLeft
-        | ConfirmRight => Choosing.confirmRight
-        | Apply => (choosing => choosing)
+    switch action {
+        | SetLeft(move) => choosing->Choosing.mapLeft(_ => Some(move))
+        | SetRight(move) => choosing->Choosing.mapRight(_ => Some(move))
+        | Apply => choosing
     }
 }
 

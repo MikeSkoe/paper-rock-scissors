@@ -1,5 +1,4 @@
 module Move = Choosing.Move;
-module Choice = Choosing.Choice;
 module Style = ReactDOM.Style;
 module Store = Store.Store;
 
@@ -11,7 +10,6 @@ module Divide = {
 module PlayerC = {
     @react.component
     let make = (~player: Player.t) => {
-        Js.log(player.health);
         <div className="player">
             <div>{`Element: ${player.element->Element.toString}`->React.string}</div>
             <div>
@@ -39,49 +37,31 @@ module ChoiceC = {
     module NotConfirmedC = {
         module Button = {
             @react.component
-            let make = (~element, ~move, ~dispatch) => {
-                let elementStyle = element => Move.ChangeElement(element) == move
-                    ? Style.make(~border="1px solid red", ())
-                    : Style.make(());
-
-                <button
-                    style={elementStyle(element)}
-                    onClick={_ => dispatch(Move.ChangeElement(element))}
-                >
+            let make = (~element, ~dispatch) => {
+                <button onClick={_ => dispatch(Move.ChangeElement(element))}>
                     {element->Element.toString->React.string}
                 </button>
             }
         }
 
         @react.component
-        let make = (~move, ~dispatch, ~isLeft) => {
-            let attackStyle = switch move {
-                | Move.Attack(_) => Style.make(~border="1px solid red", ())
-                | Move.ChangeElement(_) => Style.make(())
-            }
-            let updateDispatch = element => dispatch(isLeft ? State.UpdateLeft(element) : State.UpdateRight(element));
-            let onConfirmClick = _ => dispatch(isLeft ? State.ConfirmLeft : State.ConfirmRight);
+        let make = (~dispatch, ~isLeft) => {
+            let updateDispatch = element => dispatch(isLeft ? State.SetLeft(element) : State.SetRight(element));
             let onAttackClick = _ => updateDispatch(Move.Attack(Dice.getRandom()))
 
             <>
-                <Button element={Element.Paper} move={move} dispatch={updateDispatch} />
-                <Button element={Element.Rock} move={move} dispatch={updateDispatch} />
-                <Button element={Element.Scissors} move={move} dispatch={updateDispatch} />
-                <button style={attackStyle} onClick={onAttackClick}>
-                    {"Attack"->React.string}
-                </button>
-                <button onClick={onConfirmClick}>
-                    {"Confirm"->React.string}
-                </button>
+                <Button element={Element.Paper} dispatch={updateDispatch} />
+                <Button element={Element.Rock} dispatch={updateDispatch} />
+                <Button element={Element.Scissors} dispatch={updateDispatch} />
+                <button onClick={onAttackClick}>{"Attack"->React.string}</button>
             </>
         }
     }
 
     @react.component
-    let make = (~choice: Choice.t, ~dispatch, ~isLeft) => {
-        choice.confirmed
-            ? <ConfirmedC move={choice.move} />
-            : <NotConfirmedC move={choice.move} dispatch={dispatch} isLeft={isLeft} />
+    let make = (~choice: option<Move.t>, ~dispatch, ~isLeft) => switch choice {
+        | Some(move) => <ConfirmedC move={move} />
+        | None => <NotConfirmedC dispatch={dispatch} isLeft={isLeft} />
     }
 }
 
