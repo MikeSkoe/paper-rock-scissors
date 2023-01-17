@@ -5,7 +5,7 @@ type t = {
 
 let empty = {
     element: Element.Paper,
-    health: 100.,
+    health: 1.,
 }
 
 let makeDamage = (t, damage) => { ...t, health: max(0., t.health -. damage) };

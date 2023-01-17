@@ -16,7 +16,7 @@ module Choice = {
     }
 
     %%private(
-        let baseDamage = 25.
+        let baseDamage = 5.
     )
 
     let setMove = (choice, move) => { ...choice, move }

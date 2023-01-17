@@ -26,7 +26,7 @@ let updateDamage = (victim: Player.t, winger: Player.t, wingerChoice) => {
     victim->Player.makeDamage(damage *. coeff);
 }
 
-let updatePlayer = (
+let applyDamageToPlayer = (
     victim,
     victimChoice,
     winger,
@@ -52,8 +52,8 @@ let reduce = (state, action): state  => {
         | Apply => updateChoosing(state.choosing, action)->Choosing.foldConfirmed(
             { ...state, choosing: updateChoosing(state.choosing, action) },
             (leftChoice, rightChoice) => ({
-                left: state.left->updatePlayer(leftChoice, state.right, rightChoice),
-                right: state.right->updatePlayer(rightChoice, state.left, leftChoice),
+                left: state.left->applyDamageToPlayer(leftChoice, state.right, rightChoice),
+                right: state.right->applyDamageToPlayer(rightChoice, state.left, leftChoice),
                 choosing: Choosing.empty,
             }),
         )

@@ -11,11 +11,12 @@ module Divide = {
 module PlayerC = {
     @react.component
     let make = (~player: Player.t) => {
+        Js.log(player.health);
         <div className="player">
             <div>{`Element: ${player.element->Element.toString}`->React.string}</div>
             <div>
                 {`Health: `->React.string}
-                <input value={player.health->Belt.Float.toString} min={"0"} max={"100"} type_="range" />
+                <input value={player.health->Belt.Float.toString} min={"0"} max={"1"} step={0.01} type_="range" />
             </div>
         </div>
     }
