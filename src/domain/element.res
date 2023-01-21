@@ -8,7 +8,7 @@ let getCoeff = (a, b) => switch (a, b) {
 }
 
 let toString = element => switch element {
-    | Rock => "Rock"
-    | Paper => "Paper"
-    | Scissors => "Scissors"
+    | Rock => "🪨"
+    | Paper => "📄"
+    | Scissors => "✂️"
 }

@@ -1,0 +1,7 @@
+.box {
+    border: 1px solid var(--light);
+    box-shadow: 0 0 4px var(--black);
+    border-radius: 0.5rem;
+    margin: 1rem;
+    padding: 0.2rem 0.8rem;
+}
