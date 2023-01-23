@@ -5,15 +5,14 @@ module Store = Store.Store;
 
 @react.component
 let make = () => {
-    let left = Store.useSelector(State.Select.left);
-    let right = Store.useSelector(State.Select.right);
     let bothConfirmed = Store.useSelector(
         state => state
             ->State.Select.choosing
             ->Choosing.foldConfirmed(false, (_, _) => true)
     );
-    let choosing = Store.useSelector(State.Select.choosing);
     let dispatch = Store.useDispatch();
+    let setLeft = React.useCallback0(action => State.SetLeft(action)->dispatch);
+    let setRight = React.useCallback0(action => State.SetRight(action)->dispatch);
 
     React.useEffect1(_ => {
         if (bothConfirmed) {
@@ -25,11 +24,18 @@ let make = () => {
     }, [bothConfirmed])
 
     <>
-        <PlayerView player={left}>
-            <ChoiceView choice={choosing.leftChoice} dispatch={dispatch} isLeft={true}/>
+        <PlayerView getPlayer={State.Select.left}>
+            <ChoiceView
+                getChoice={State.Select.leftChoice}
+                dispatch={setLeft}
+            />
         </PlayerView>
-        <PlayerView player={right}>
-            <ChoiceView choice={choosing.rightChoice} dispatch={dispatch} isLeft={false} />
+
+        <PlayerView getPlayer={State.Select.right}>
+            <ChoiceView
+                getChoice={State.Select.rightChoice}
+                dispatch={setRight}
+            />
         </PlayerView>
     </>
 }

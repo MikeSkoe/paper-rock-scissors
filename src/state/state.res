@@ -70,4 +70,6 @@ module Select = {
     let left = ({ left }) => left;
     let right = ({ right }) => right;
     let choosing = ({ choosing }) => choosing;
+    let leftChoice = ({ choosing }) => choosing.leftChoice;
+    let rightChoice = ({ choosing }) => choosing.rightChoice;
 }
