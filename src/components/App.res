@@ -21,7 +21,7 @@ let make = () => {
         } else {
             None;
         }
-    }, [bothConfirmed])
+    }, [bothConfirmed]);
 
     <>
         <PlayerView getPlayer={State.Select.left}>

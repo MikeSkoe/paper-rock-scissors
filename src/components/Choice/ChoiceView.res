@@ -3,7 +3,7 @@
 module Move = Choosing.Move;
 
 @react.component
-let make = React.memo((
+let make = (
     ~getChoice: State.state => option<Move.t>,
     ~dispatch: Move.t => unit,
 ) => {
@@ -32,4 +32,4 @@ let make = React.memo((
             </>
         }}
     </div>
-})
+}
