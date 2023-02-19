@@ -4,10 +4,10 @@ module Move = Choosing.Move;
 
 @react.component
 let make = (
-    ~getChoice: State.state => option<Move.t>,
+    ~getChoice: BattleState.state => option<Move.t>,
     ~dispatch: Move.t => unit,
 ) => {
-    let choice = Store.Store.useSelector(getChoice);
+    let choice = BattleStore.Store.useSelector(getChoice);
 
     <div className={hlist["hlist"]}>
         {switch choice {

@@ -1,6 +1,5 @@
 {
-  "name": "rescript-react-realworld-example-app",
-  "namespace": true,
+  "name": "app",
   "suffix": ".bs.js",
   "reason": { "react-jsx": 3 },
   "bsc-flags": [
