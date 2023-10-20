@@ -1,40 +1,28 @@
 @module external styles: {..} = "./app.module.css";
 
 module Style = ReactDOM.Style;
-module Store = BattleStore.Store;
-module State = BattleState;
 
 @react.component
 let make = () => {
-    let bothConfirmed = Store.useSelector(
-        state => state
-            ->State.Select.choosing
-            ->Choosing.foldConfirmed(false, (_, _) => true)
-    );
-    let dispatch = Store.useDispatch();
-    let setLeft = React.useCallback0(action => State.SetLeft(action)->dispatch);
-    let setRight = React.useCallback0(action => State.SetRight(action)->dispatch);
-
-    React.useEffect1(_ => {
-        if (bothConfirmed) {
-            let timer = Js.Global.setTimeout(_ => dispatch(State.Apply), 2000);
-            Some(_ => Js.Global.clearTimeout(timer))
-        } else {
-            None;
-        }
-    }, [bothConfirmed]);
+    let appAction = React.useContext(BattleStore.AppContext.appActionContext);
+    let setLeft = React.useCallback0(action => {
+        action->BattleState.SetLeft->ReX.call(appAction, _);
+    });
+    let setRight = React.useCallback0(action => {
+        appAction->ReX.call(action->BattleState.SetRight);
+    });
 
     <>
-        <PlayerView getPlayer={State.Select.left}>
+        <PlayerView getPlayer={BattleState.Select.left}>
             <ChoiceView
-                getChoice={State.Select.leftChoice}
+                getChoice={BattleState.Select.leftChoice}
                 dispatch={setLeft}
             />
         </PlayerView>
 
-        <PlayerView getPlayer={State.Select.right}>
+        <PlayerView getPlayer={BattleState.Select.right}>
             <ChoiceView
-                getChoice={State.Select.rightChoice}
+                getChoice={BattleState.Select.rightChoice}
                 dispatch={setRight}
             />
         </PlayerView>

@@ -7,7 +7,7 @@ let make = (
     ~getChoice: BattleState.state => option<Move.t>,
     ~dispatch: Move.t => unit,
 ) => {
-    let choice = BattleStore.Store.useSelector(getChoice);
+    let choice = BattleStore.AppContext.useSelect(getChoice);
 
     <div className={hlist["hlist"]}>
         {switch choice {
@@ -20,13 +20,16 @@ let make = (
             | None => <>
                 {[Element.Paper, Element.Rock, Element.Scissors]
                     ->Belt.Array.map(element =>
-                        <button key={element->Element.toString} onClick={_ => dispatch(Move.ChangeElement(element))}>
+                        <button
+                            key={element->Element.toString}
+                            onClick={_ => element->Move.ChangeElement->dispatch}
+                        >
                             {element->Element.toString->React.string}
                         </button>
                     )
                     ->React.array
                 }
-                <button onClick={_ => dispatch(Move.Attack(Dice.getRandom()))}>
+                <button onClick={_ => Dice.getRandom()->Move.Attack->dispatch}>
                     {"Attack"->React.string}
                 </button>
             </>

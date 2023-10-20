@@ -3,18 +3,7 @@
 
 @react.component
 let make = (~getPlayer: BattleState.state => Player.t, ~children) => {
-    let player = BattleStore.Store.useSelector(getPlayer);
-
-    React.useEffect1(() => {
-        let timer = ref(None);
-
-        if player.health <= 0. {
-            timer.contents = Some(Js.Global.setTimeout(_ => RescriptReactRouter.replace("result"), 1000));
-        }
-
-        timer.contents
-            ->Belt.Option.map(timer => () => Js.Global.clearTimeout(timer));
-    }, [player.health <= 0.])
+    let player = BattleStore.AppContext.useSelect(getPlayer);
 
     <div className={Utils.classname([box["box"], styles["player"]])}>
         <div>{`Element: ${player.element->Element.toString}`->React.string}</div>

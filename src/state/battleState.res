@@ -1,6 +1,7 @@
 module Move = Choosing.Move;
 
 type action =
+    | Init
     | SetLeft(Move.t)
     | SetRight(Move.t)
     | Apply
@@ -12,11 +13,18 @@ type state = {
     choosing: Choosing.t,
 }
 
+let empty = {
+    left: Player.empty,
+    right: Player.empty,
+    choosing: Choosing.empty,
+};
+
 let reduce = (state, action): state  => {
     let choosing = switch action {
         | SetLeft(move) => Choosing.setLeft(move, state.choosing)
         | SetRight(move) => Choosing.setRight(move, state.choosing)
         | Apply => state.choosing
+        | Init => state.choosing
     }
 
     switch action {
@@ -36,15 +44,10 @@ let reduce = (state, action): state  => {
                 choosing: Choosing.empty,
             }),
         )
+        | Init => empty
         | _ => { ...state, choosing }
     }
 }
-
-let empty = {
-    left: Player.empty,
-    right: Player.empty,
-    choosing: Choosing.empty,
-};
 
 module Select = {
     let left = ({ left }) => left;
