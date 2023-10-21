@@ -410,10 +410,10 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@mikeskoe/rex@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@mikeskoe/rex/-/rex-0.1.2.tgz#5f4e769928370936db8f44e97d5e97c4eff02035"
-  integrity sha512-q1stzl34gFiiow5x5JrOUwyK7KmzGjMFuIFd88c0MXynVUgJT/gbxeVLRNu9rNThfDBj4lHjKROo2UxBg/gKEw==
+"@mikeskoe/rex@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@mikeskoe/rex/-/rex-0.1.3.tgz#c58a86578e85b63962208df3422dc84992a8c933"
+  integrity sha512-H8+q32is+LmejtLmQy+r8fwvQhnXhBlqdDy/DVftPnjWEYqv+nLqsDyY3ub8ViMiXgTmY/HFE2nThyoIhmUE0A==
   dependencies:
     "@rescript/core" "*"
     rescript "*"

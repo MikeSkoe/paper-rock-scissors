@@ -4,7 +4,7 @@ module Style = ReactDOM.Style;
 
 @react.component
 let make = () => {
-    let appAction = React.useContext(BattleStore.AppContext.appActionContext);
+    let appAction = React.useContext(BattleStore.appActionContext);
     let setLeft = React.useCallback0(action => {
         action->BattleState.SetLeft->ReX.call(appAction, _);
     });

@@ -3,7 +3,8 @@
 
 @react.component
 let make = (~getPlayer: BattleState.state => Player.t, ~children) => {
-    let player = BattleStore.AppContext.useSelect(getPlayer);
+    let app = React.useContext(BattleStore.appContext);
+    let player = app->BattleStore.useSync(Player.empty, getPlayer);
 
     <div className={Utils.classname([box["box"], styles["player"]])}>
         <div>{`Element: ${player.element->Element.toString}`->React.string}</div>

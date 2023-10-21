@@ -7,7 +7,8 @@ let make = (
     ~getChoice: BattleState.state => option<Move.t>,
     ~dispatch: Move.t => unit,
 ) => {
-    let choice = BattleStore.AppContext.useSelect(getChoice);
+    let app = React.useContext(BattleStore.appContext);
+    let choice = app->BattleStore.useSync(None, getChoice);
 
     <div className={hlist["hlist"]}>
         {switch choice {

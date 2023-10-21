@@ -2,7 +2,7 @@ module Move = {
     type t =
         | ChangeElement(Element.t)
         | Attack(Dice.t);
-    
+
     let foldElement = (t: t, defaultElement: 'a, fn: Element.t => 'a) => switch t {
         | ChangeElement(element) => fn(element)
         | _ => defaultElement
