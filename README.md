@@ -1,1 +1,4 @@
-# This project is session game inspired by pokemon mechanics, but with Paper, Rock and Scissors instead of types(or pokemons themselves)
+# A Paper Rock Scissors game with alternative mechanics
+
+To start the game run:
+`yarn start`
