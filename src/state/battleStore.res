@@ -33,30 +33,32 @@ let initStore = () => {
     (dispatch, app, () => ()->unsubApply->unsubResult);
 }
 
-let useSync = (t, initial, selector) => {
-    let snapshot = React.useRef(initial);
+let useSync: (ReX.t<BattleState.action, BattleState.state>, 'a, BattleState.state => 'a) => 'a
+    =
+    (t, initial, selector) => {
+        let snapshot = React.useRef(initial);
 
-    React.useSyncExternalStore(
-        ~subscribe = sub => {
-            let unsub = t->ReX.sub(value => {
-                snapshot.current = selector(value);
-                sub();
-            });
-            (.) => unsub();
-        },
-        ~getSnapshot = () => snapshot.current,
-    );
-}
+        React.useSyncExternalStore(
+            ~subscribe = sub => {
+                let unsub = t->ReX.sub(value => {
+                    snapshot.current = selector(value);
+                    sub();
+                });
+                (.) => unsub();
+            },
+            ~getSnapshot = () => snapshot.current,
+        );
+    }
 
 %%private(
     let (appAction, app, _) = initStore();
 )
 
-let appActionContext = React.createContext(appAction);
+let dispatchContext = React.createContext(appAction);
 let appContext = React.createContext(app);
 
 module AppActionProvider = {
-    let make = React.Context.provider(appActionContext);
+    let make = React.Context.provider(dispatchContext);
 }
 
 module AppProvider = {

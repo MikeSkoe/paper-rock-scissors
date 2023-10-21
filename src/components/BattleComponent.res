@@ -2,29 +2,22 @@
 
 module Style = ReactDOM.Style;
 
-@react.component
-let make = () => {
-    let appAction = React.useContext(BattleStore.appActionContext);
-    let setLeft = React.useCallback0(action => {
-        action->BattleState.SetLeft->ReX.call(appAction, _);
-    });
-    let setRight = React.useCallback0(action => {
-        appAction->ReX.call(action->BattleState.SetRight);
-    });
+module Select = BattleState.Select;
 
+@react.component
+let make = () =>
     <>
-        <PlayerView getPlayer={BattleState.Select.left}>
+        <PlayerView getPlayer={Select.left}>
             <ChoiceView
-                getChoice={BattleState.Select.leftChoice}
-                dispatch={setLeft}
+                getChoice={Select.leftChoice}
+                battleAction={action => SetLeft(action)}
             />
         </PlayerView>
 
-        <PlayerView getPlayer={BattleState.Select.right}>
+        <PlayerView getPlayer={Select.right}>
             <ChoiceView
-                getChoice={BattleState.Select.rightChoice}
-                dispatch={setRight}
+                getChoice={Select.rightChoice}
+                battleAction={action => SetRight(action)}
             />
         </PlayerView>
     </>
-}
